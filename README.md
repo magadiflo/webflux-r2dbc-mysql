@@ -25,9 +25,9 @@ Tutorial tomado del canal de **Luigi Code**.
         <optional>true</optional>
     </dependency>
     <dependency>
-        <groupId>io.asyncer</groupId>
-        <artifactId>r2dbc-mysql</artifactId>
-        <version>1.1.0</version>
+        <groupId>com.github.jasync-sql</groupId>
+        <artifactId>jasync-r2dbc-mysql</artifactId>
+        <version>2.1.16</version>
     </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
