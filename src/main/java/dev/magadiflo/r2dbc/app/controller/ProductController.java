@@ -38,6 +38,6 @@ public class ProductController {
 
     @DeleteMapping(path = "/{id}")
     public Mono<Void> deleteProduct(@PathVariable Long id) {
-        return this.productService.deleteProduct(id);
+        return this.productService.deleteProduct(id).then();
     }
 }

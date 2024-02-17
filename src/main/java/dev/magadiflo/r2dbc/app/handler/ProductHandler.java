@@ -1,6 +1,5 @@
 package dev.magadiflo.r2dbc.app.handler;
 
-
 import dev.magadiflo.r2dbc.app.entity.Product;
 import dev.magadiflo.r2dbc.app.service.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,7 @@ public class ProductHandler {
     public Mono<ServerResponse> getProduct(ServerRequest request) {
         Long id = Long.parseLong(request.pathVariable("id"));
         return this.productService.findProductById(id)
-                .flatMap(productDB -> ServerResponse.ok().bodyValue(productDB))
-                .switchIfEmpty(ServerResponse.notFound().build());
+                .flatMap(productDB -> ServerResponse.ok().bodyValue(productDB));
     }
 
     public Mono<ServerResponse> saveProduct(ServerRequest request) {
@@ -43,23 +41,15 @@ public class ProductHandler {
     public Mono<ServerResponse> updateProduct(ServerRequest request) {
         Long id = Long.parseLong(request.pathVariable("id"));
         Mono<Product> productRequestMono = request.bodyToMono(Product.class);
-        return this.productService.findProductById(id)
-                .zipWith(productRequestMono, (productDB, productRequest) -> {
-                    productDB.setName(productRequest.getName());
-                    productDB.setPrice(productRequest.getPrice());
-                    return productDB;
-                })
-                .flatMap(product -> this.productService.updateProduct(id, product))
-                .flatMap(productDB -> ServerResponse.ok().bodyValue(productDB))
-                .switchIfEmpty(ServerResponse.notFound().build());
+        return productRequestMono
+                .flatMap(productRequest -> this.productService.updateProduct(id, productRequest))
+                .flatMap(productDB -> ServerResponse.ok().bodyValue(productDB));
     }
 
     public Mono<ServerResponse> deleteProduct(ServerRequest request) {
         Long id = Long.parseLong(request.pathVariable("id"));
-        return this.productService.findProductById(id)
-                .flatMap(productDB -> this.productService.deleteProduct(id).then(Mono.just(true)))
-                .flatMap(wasDeleted -> ServerResponse.noContent().build())
-                .switchIfEmpty(ServerResponse.notFound().build());
+        return this.productService.deleteProduct(id)
+                .flatMap(wasDeleted -> ServerResponse.noContent().build());
     }
 
 

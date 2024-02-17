@@ -13,5 +13,5 @@ public interface IProductService {
 
     Mono<Product> updateProduct(Long id, Product product);
 
-    Mono<Void> deleteProduct(Long id);
+    Mono<Boolean> deleteProduct(Long id);
 }
