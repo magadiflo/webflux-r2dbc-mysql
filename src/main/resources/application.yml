@@ -1,1 +1,17 @@
+server:
+  port: 8080
+  error:
+    include-message: always
 
+spring:
+  application:
+    name: webflux-r2dbc-mysql
+
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/db_webflux_r2dbc
+    username: admin
+    password: magadiflo
+
+logging:
+  level:
+    org.springframework.r2dbc: DEBUG
