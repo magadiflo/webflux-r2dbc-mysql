@@ -1,7 +1,9 @@
 package dev.magadiflo.r2dbc.app.handler;
 
+import dev.magadiflo.r2dbc.app.dto.ProductDTO;
 import dev.magadiflo.r2dbc.app.entity.Product;
 import dev.magadiflo.r2dbc.app.service.IProductService;
+import dev.magadiflo.r2dbc.app.validation.ObjectValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import java.net.URI;
 public class ProductHandler {
 
     private final IProductService productService;
+    private final ObjectValidator objectValidator;
 
     public Mono<ServerResponse> getAllProducts(ServerRequest request) {
         Flux<Product> productFlux = this.productService.findAllProducts();
@@ -32,17 +35,19 @@ public class ProductHandler {
 
     public Mono<ServerResponse> saveProduct(ServerRequest request) {
         String path = request.requestPath().value();
-        Mono<Product> productMono = request.bodyToMono(Product.class);
-        return productMono
+        Mono<ProductDTO> productDtoMono = request.bodyToMono(ProductDTO.class)
+                .doOnNext(this.objectValidator::validate);
+        return productDtoMono
                 .flatMap(this.productService::saveProduct)
                 .flatMap(productDB -> ServerResponse.created(URI.create(path + "/" + productDB.getId())).bodyValue(productDB));
     }
 
     public Mono<ServerResponse> updateProduct(ServerRequest request) {
         Long id = Long.parseLong(request.pathVariable("id"));
-        Mono<Product> productRequestMono = request.bodyToMono(Product.class);
-        return productRequestMono
-                .flatMap(productRequest -> this.productService.updateProduct(id, productRequest))
+        Mono<ProductDTO> productDtoRequestMono = request.bodyToMono(ProductDTO.class)
+                .doOnNext(this.objectValidator::validate);
+        return productDtoRequestMono
+                .flatMap(productDtoRequest -> this.productService.updateProduct(id, productDtoRequest))
                 .flatMap(productDB -> ServerResponse.ok().bodyValue(productDB));
     }
 

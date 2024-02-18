@@ -1,5 +1,6 @@
 package dev.magadiflo.r2dbc.app.controller;
 
+import dev.magadiflo.r2dbc.app.dto.ProductDTO;
 import dev.magadiflo.r2dbc.app.entity.Product;
 import dev.magadiflo.r2dbc.app.service.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +28,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public Mono<Product> saveProduct(@RequestBody Product product) {
-        return this.productService.saveProduct(product);
+    public Mono<Product> saveProduct(@RequestBody ProductDTO productDto) {
+        return this.productService.saveProduct(productDto);
     }
 
     @PutMapping(path = "/{id}")
-    public Mono<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return this.productService.updateProduct(id, product);
+    public Mono<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDto) {
+        return this.productService.updateProduct(id, productDto);
     }
 
     @DeleteMapping(path = "/{id}")
